@@ -80,7 +80,15 @@ if now() > s:
 #     print('')
 # except :
 #         print('Error :something went wrong')
-
+if os.path.isfile('C:/Users/Public/Documents/傳真通知紀錄.csv'): #檢查檔案在不在--公司用
+    print('找到更新紀錄檔')
+else:
+    print('更新記錄檔不存在')
+    print('將會自動建立發行圖面更新紀錄檔')
+    
+    with open('C:/Users/Public/Documents/傳真通知紀錄.csv', 'w', encoding = 'cp950') as f:
+        a = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        f.write(str(a)+ '\n')
 
 #line notification
 # url = 'https://notify-api.line.me/api/notify'
@@ -123,38 +131,17 @@ class FileEventHandler(FileSystemEventHandler):
         diff = DirectorySnapshotDiff(self.snapshot, snapshot)
         self.snapshot = snapshot
         self.timer = threading.Timer(0.2, self.snapshot)
-        #print(diff)
         if diff.files_created == []:
             pass
         else:
-            log = []
             for dc in diff.files_created:
+                log = []
                 ans = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))," 傳真-新增: ", dc
                 print(ans[0], Fore.YELLOW + ans[1], Fore.CYAN + ans[2])
-                notification.notify(title = '傳真-新增', message = dc[14:] ,app_icon ='C:/Users/cnc-3/Downloads/light.ico', timeout = 0.3 )
+                notification.notify(title = '傳真-新增', message = str(ans[2]) ,app_icon ='C:/Users/cnc-3/Downloads/light.ico', timeout = 2 )
                 
                 #data = {'message':ans}     # 設定要發送的訊息
                 #data = requests.post(url, headers=headers, data=data)   # 使用 POST 方法
-                if os.path.isfile('C:/Users/Public/Documents/傳真通知紀錄.csv'): #檢查檔案在不在
-                    with open('C:/Users/Public/Documents/傳真通知紀錄.csv', 'r', encoding = 'cp950') as f:
-                        for txtlog in f:
-                            log.append(str(txtlog))
-                    with open('C:/Users/Public/Documents/傳真通知紀錄.csv', 'w', encoding = 'cp950') as f:
-                        for l in log:
-                            f.write(str(l))
-                        f.write(str(ans[0]) + str(ans[1]) + str(ans[2]) + '\n')
-                else:
-                    with open('C:/Users/Public/Documents/傳真通知紀錄.csv', 'w', encoding = 'cp950') as f:
-                        for l in log:
-                            f.write(str(l))
-                        f.write(str(ans[0]) + str(ans[1]) + str(ans[2]) + '\n')            
-        for dd in diff.files_deleted:
-            log = []
-            ans = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))," 傳真刪除: ", dd
-            print(ans[0], Fore.RED + ans[1], Fore.CYAN + ans[2])
-            notification.notify(title = '傳真-刪除', message = dd[14:] ,app_icon ='C:/Users/cnc-3/Downloads/light.ico', timeout = 0.3 )
-          # print("檔案-修改: ", diff.files_modified)
-            if os.path.isfile('C:/Users/Public/Documents/傳真通知紀錄.csv'): #檢查檔案在不在
                 with open('C:/Users/Public/Documents/傳真通知紀錄.csv', 'r', encoding = 'cp950') as f:
                     for txtlog in f:
                         log.append(str(txtlog))
@@ -162,31 +149,22 @@ class FileEventHandler(FileSystemEventHandler):
                     for l in log:
                         f.write(str(l))
                     f.write(str(ans[0]) + str(ans[1]) + str(ans[2]) + '\n')
-            else:
-                with open('C:/Users/Public/Documents/傳真通知紀錄.csv', 'w', encoding = 'cp950') as f:
-                    for l in log:
-                        f.write(str(l))
-                    f.write(str(ans[0]) + str(ans[1]) + str(ans[2]) + '\n')            
 
-        # dirm_ans = [] 
-        # for dirm in diff.d_modified:
-        #     #ans = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))," 圖面移動: ", dirm
-        #     dirm_ans.append(dirm)
-        # if len(dirm_ans) < 2:
-        #     pass
-        # else:
-        #     print('檔案從',dirm_ans[0],'    移至>>>    ',dirm_ans[1])
-        #     #print(ans[0], ans[1], ans[2])
-        #     #notification.notify(title = '發行圖-移動', message = dirm ,timeout = 0.3 )
+        for dd in diff.files_deleted:
+            log = []
+            ans = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))," 傳真刪除: ", dd
+            print(ans[0], Fore.RED + ans[1], Fore.CYAN + ans[2])
+            notification.notify(title = '傳真-刪除', message = str(ans[2]) ,app_icon ='C:/Users/cnc-3/Downloads/light.ico', timeout = 2 )
+          # print("檔案-修改: ", diff.files_modified)
+            with open('C:/Users/Public/Documents/傳真通知紀錄.csv', 'r', encoding = 'cp950') as f:
+                for txtlog in f:
+                    log.append(str(txtlog))
+            with open('C:/Users/Public/Documents/傳真通知紀錄.csv', 'w', encoding = 'cp950') as f:
+                for l in log:
+                    f.write(str(l))
+                f.write(str(ans[0]) + str(ans[1]) + str(ans[2]) + '\n')           
 
 
-        # print("資料夾-被修改: ", diff.dirs_modified)
-        # print("資料夾-移動: ", diff.dirs_moved)
-        # print("資料夾-刪除: ", diff.dirs_deleted)
-        # print("資料夾-建立: ", diff.dirs_created)
-		
-        #pass
-    
 class DirMonitor(object):
     """文件夹监视类"""
     
@@ -211,7 +189,6 @@ class DirMonitor(object):
 
  
 if __name__ == "__main__":
-
     monitor = DirMonitor(r'//192.168.0.17/共用資料夾/二樓傳真收件夾 2681-5569')
     monitor.start()
     monitor = DirMonitor(r'//192.168.0.17/共用資料夾/一樓傳真收件夾 2681-3620')
