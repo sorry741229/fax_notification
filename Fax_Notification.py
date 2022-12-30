@@ -42,12 +42,12 @@ def delete_all():
 
 
 menu = (MenuItem('顯示', show_window, default=True), Menu.SEPARATOR, MenuItem('退出', quit_window))
-image = Image.open("light.ico")
+image = Image.open('C:/Users/Public/Pictures/faxpic.ico')
 icon = pystray.Icon("icon", image, "Kolink傳真通知", menu)
 win = tk.Tk()
 win.title('Kolink傳真通知紀錄')
 win.geometry("650x130")
-win.resizable(width=False, height=False)
+win.resizable(width= 1 , height=False)
 text = tk.Text(win)  # 顯示文字
 text.config(padx = 1 , pady = 2)
 text.config(bg = '#dcdcdc' , fg = '#191970')
@@ -70,7 +70,7 @@ def now():
     return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 s = '2023-06-14 23:59:59'
 if now() > s:
-    #notification.notify(title = '歡迎使用Kolink傳真通知', message = 'by F0614 Martin Chung at Coolink CNC Dept. in DEC 2022' ,app_icon ='C:/Users/Public/Pictures/light.ico', timeout = 5 )
+    #notification.notify(title = '歡迎使用Kolink傳真通知', message = 'by F0614 Martin Chung at Coolink CNC Dept. in DEC 2022' ,app_icon ='C:/Users/Public/Pictures/faxico.ico', timeout = 5 )
     text.insert(tk.INSERT, 'Welcome to use FAX Notification For Kolink'+ str('\n'))
     text.insert(tk.INSERT, 'by Martin Chung at Coolink CNC Dept. in DEC 2022'+ str('\n'))
 else:
@@ -93,7 +93,7 @@ else:
         a = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
         f.write(str(a)+ '\n')
 
-notification.notify(title = 'Kolink傳真通知', message = '啟動偵測中' ,app_icon ='C:/Users/Public/Pictures/light.ico', timeout = 1 )#--公司用
+notification.notify(title = 'Kolink傳真通知', message = '啟動偵測中' ,app_icon ='C:/Users/Public/Pictures/faxpic.ico', timeout = 1 )#--公司用
 
 class FileEventHandler(FileSystemEventHandler):
     def __init__(self, aim_path):
@@ -123,13 +123,15 @@ class FileEventHandler(FileSystemEventHandler):
             for dc in diff.files_created:
                 log = []
                 ans = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))," 通知: ", dc
-                # 文字標示所在視窗  
+                # 文字標示所在視窗
+                text.config(state = 'normal')
                 text.insert(tk.INSERT, str((ans[0][5:]) + ans[1] + ans[2][21:] + '\n'))
                 text.tag_add('left', 1.0, "end")  #輸出文字對齊用
                 text.yview("end") #滾動到最下面
+                text.config(state = 'disable')
                 text.pack()
                 #print(ans[0], Fore.YELLOW + ans[1], Fore.CYAN + ans[2])
-                notification.notify(title = 'Kolink傳真通知',  message = str((ans[2][21:])) ,app_icon ='C:/Users/Public/Pictures/light.ico', timeout = 1 )
+                notification.notify(title = 'Kolink傳真通知',  message = str((ans[2][21:])) ,app_icon ='C:/Users/Public/Pictures/faxpic.ico', timeout = 1 )
                 #data = {'message':ans}     # 設定要發送的訊息
                 #data = requests.post(url, headers=headers, data=data)   # 使用 POST 方法
                 with open('C:/Users/Public/Documents/傳真通知紀錄.csv', 'r', encoding = 'cp950') as f:
